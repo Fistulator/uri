@@ -16,6 +16,7 @@ class Board:
                       ]
 
         self.data = [['.'] * cols for _ in range(rows)]
+        
 
     def load_from_file(self, file_path):
         """
@@ -112,6 +113,45 @@ class Board:
                             moves[(newx,newy)] = copy.deepcopy(toflip)
         return moves
         
+    def is_frontier(self, row, col):
+        dir_x = [-1, -1, -1, 0, 0, 1, 1, 1]
+        dir_y = [-1, 0, 1, -1, 1, -1, 0, 1]
+        
+        for x, y in zip(dir_x, dir_y):
+            newx = row + x
+            newy = col + y
+            if 0 <= newx < self.rows and 0 <= newy < self.cols:
+                    if self.data[newx][newy] == '.':
+                        return 1
+        return 0
+        
+    def get_no_of_moves(self,color):
+        dir_x = [-1, -1, -1, 0, 0, 1, 1, 1]
+        dir_y = [-1, 0, 1, -1, 1, -1, 0, 1]
+        
+
+        pieces = self.find_pieces(color)
+        l = []
+        #print(str(pieces))
+        for p in pieces:
+            #print ("Krecem iz " + str(p ) + 'prijatelji su '+ color + " figura ovde je " + self.data[p[0]][p[1]])
+            for x, y in zip(dir_x, dir_y):
+                #print("X : " + str(x) + " Y : " + str(y))
+                add = False
+                newx = p[0] + x
+                newy = p[1] + y
+                #print("Newx " + str(newx) + " newy " + str(newy) + " data " + board.data[newx][newy])
+                while 0 <= newx < self.rows and 0 <= newy < self.cols and self.data[newx][newy] != color and self.data[newx][newy] != '.':
+    #                print("Newx " + str(newx) + " newy " + str(newy) + " data " + board.data[newx][newy])
+                    #print("na poziciji " + str ((newx, newy)) + " najden protivnik, idem dalje")
+                    add = True
+                    newx += x
+                    newy += y
+                if 0 <= newx < self.rows and 0 <= newy < self.cols:
+                    if self.data[newx][newy] == '.' and add and (newx, newy) not in l:
+                        l.append((newx,newy))
+        return len(l)
+        
     def white_winner(self):
         val = 0 
         for row in range(self.rows):
@@ -121,8 +161,12 @@ class Board:
                 elif self.data[row][col] == 'b':
                     val -= 1
         if val > 0:
-            return "White has won!"
+            return "w"
         elif val < 0:
-            return "Black has won!"
+            return "b"
         else:
-            return "Stalemate!"
+            return "s"
+    
+            
+            
+    

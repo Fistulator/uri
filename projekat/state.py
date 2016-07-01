@@ -2,13 +2,12 @@ from __future__ import print_function
 
 import copy
 
-
 class State(object):
     """
     Klasa koja opisuje stanje table.
     """
 
-    def __init__(self, board, color, parent=None):
+    def __init__(self, board, color, eval_f, parent=None):
         """
         :param board: Board (tabla)
         :param parent: roditeljsko stanje
@@ -18,10 +17,10 @@ class State(object):
         self.board = board  # sahovska tabla koja opisuje trenutno stanje
         self.parent = parent  # roditeljsko stanje
         self.value = 0.  # "vrednost" stanja - racuna ga evaluaciona funkcija calculate_value()
-        self.col = ''
+        self.eval = eval_f
         
     def __str__(self):
-        return "Simple material"
+        return str(self.eval)
 
     def generate_next_states(self, max_player):
         """
@@ -43,7 +42,7 @@ class State(object):
             new_board.set_piece(color, legal_move[0], legal_move[1])
             for pos in legal_moves[legal_move]:
                 new_board.set_piece(color, pos[0], pos[1])
-            next_state = State(new_board,self.color, self)
+            next_state = State(new_board,self.color, self.eval, self)
             next_states.append(next_state)
         # TODO 5: Izmesati listu moguca sledeca stanja (da ne budu uvek u istom redosledu)
         return next_states
@@ -54,12 +53,8 @@ class State(object):
         :return:
         """
  
-        for row in range(self.board.rows):
-            for col in range(self.board.cols):
-                if self.board.data[row][col] != '.':
-                    if self.board.data[row][col] == self.color:                    
-                        self.value += 1
-                    else:
-                        self.value -= 1
+        self.value = self.eval.get_value(self.board, self.color)
         return self.value
+                
+    
         

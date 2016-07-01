@@ -10,6 +10,7 @@ from PIL import Image, ImageTk  # pip install --upgrade Pillow==3.1.1
 from board import Board
 from state import *
 from search import *
+from eval_f import *
 
 
 def load_board_from_file(filename=None):
@@ -34,20 +35,21 @@ def load_board(from_file=None):      # filename passed when reopening (resetting
 def reset():
     display_board()
 
-p1times = []
-p2times = []
 moves = {}
 start, end = time.time(), None
-log = file('log.txt', 'a')
+log = file('loglong.csv', 'a')
 
-def automate():
-    global moves, board, history, start, end, p1times, p2times
+def automate(bdepth = 4, beval = Fancy(), wdepth = 3, weval = Simple()):
+    global moves, board, history, start, end
+    load_board('boards/reversi.brd')
+    p1times = []
+    p2times = []
     notover = True
-    i = 0
+    wturns = bturns = 0
     while notover:
         start = time.time()
-        search = Minimax(board, 2, "w")  # ovde promeniti koji se algoritam koristi i koja je dubina pretrage
-        next_state = search.perform_adversarial_search()  # izvrsi pretragu
+        searchw = AlphaBeta(board, wdepth, "w", weval)  # ovde promeniti koji se algoritam koristi i koja je dubina pretrage
+        next_state = searchw.perform_adversarial_search()  # izvrsi pretragu
         end = time.time()
         duration = end - start
         p1times.append(duration)
@@ -58,41 +60,78 @@ def automate():
         else:
             board = next_state.board
             display_board()
+            wturns += 1
             start = time.time()
-        print(str(search))
-        su = sum(p1times)
-        print("Number of moves taken = " + str(len(p1times)) + " Average thinking time = " + str(su/len(p1times)*1.))   
+        
                 
-        if notover:
+        start = time.time()
+        searchb = AlphaBeta(board, bdepth, "b", beval)  # ['p', 'c', 'l', 'm', 'f', 'd'] su svi argumenti, c- corner, p - pieces, m - mobility, f- frontier, d - piece difference, l - oko coskova
+        next_state = searchb.perform_adversarial_search()  # izvrsi pretragu
+        end = time.time()
+        duration = end - start
+        p2times.append(duration)
+        print('--- {0} was thinking for {1} seconds ---'.format('Black', duration))
+        if next_state is None:
+            print('--- {0} has no moves ---'.format('Black'))
+            notover = False
+        else:
+            board = next_state.board
+            display_board()
+            bturns += 1
             start = time.time()
-            search = Minimax(board, 4, "b")  # ovde promeniti koji se algoritam koristi i koja je dubina pretrage
-            next_state = search.perform_adversarial_search()  # izvrsi pretragu
-            end = time.time()
-            duration = end - start
-            p2times.append(duration)
-            print('--- {0} was thinking for {1} seconds ---'.format('Black', duration))
-            if next_state is None:
-                print('--- {0} has no moves ---'.format('Black'))
-                notover = False
-            else:
-                board = next_state.board
-                display_board()
-                start = time.time()
-            print(str(search))
-            su = sum(p2times)
-            print("Number of moves taken = " + str(len(p2times)) + " Average thinking time = " + str(su/len(p2times)*1.))
+            notover = True
             
-            i += 1
         
         bs = board.find_pieces('b')
         ws = board.find_pieces('w')
         
-        print("turn " + str(i) + " whites : " + str(len(ws)) + " blacks : " + str(len(bs))+ '\n')
-        
-    print(board.white_winner())
+        print("turn " + str(wturns) + " whites : " + str(len(ws)) + " blacks : " + str(len(bs))+ '\n')
+      
+    su = sum(p1times)
+    print(str(searchw))
+    log.write(str(searchw) + ',' + str(su/len(p1times)*1.) + ',')
+    print("Number of moves taken = " + str(len(p1times)) + " Average thinking time = " + str(su/len(p1times)*1.))   
+    print(str(searchb))
+    su = sum(p2times)
+    log.write(str(searchb) + ',' + str(su/len(p2times)*1.) + ',')
+    print("Number of moves taken = " + str(len(p2times)) + " Average thinking time = " + str(su/len(p2times)*1.))
+    log.write(str(wturns) + ',' + str(bturns) + ',' + board.white_winner() + ',' + str(len(ws)) + " : " + str(len(bs)) + '\n')
+    print(board.white_winner() + " in " + str(wturns) + " turns")
 
-        
+def dolog():
+    log.write('weval,wdepth,wavgt,beval,bdepth,bavgt,wturns,bturns,winner,w:b\n')
+    evals = [Zones(), Classic(), Fancy()]
+    for i in range(len(evals)):
+        automate(1, evals[i], 1, Simple())
+        automate(1, evals[i], 2, Simple())
+        automate(1, evals[i], 3, Simple())
+        automate(2, evals[i], 3, Simple())
+        automate(2, evals[i], 5, Simple())
+        automate(3, evals[i], 5, Simple())
+        if i > 0:
+            j = i - 1
+            automate(1, evals[i], 1, evals[j])
+            automate(1, evals[i], 2, evals[j])
+            automate(1, evals[i], 3, evals[j])
+            automate(2, evals[i], 3, evals[j])
+            automate(2, evals[i], 5, evals[j])
+            automate(3, evals[i], 5, evals[j])
+        if i > 1:
+            j = i - 2
+            automate(1, evals[i], 1, evals[j])
+            automate(1, evals[i], 2, evals[j])
+            automate(1, evals[i], 3, evals[j])
+            automate(2, evals[i], 3, evals[j])
+            automate(2, evals[i], 5, evals[j])
+            automate(3, evals[i], 5, evals[j])
+            
+    log.close()
 
+def append():
+    automate(4, FancyTest(['d']), 5, Zones())
+    automate(4, FancyTest(['d']), 5, Classic())
+ 
+    log.close()
 
 def move_piece(event, row=None, col=None):
     global moves, board, history, start, end, p1times, p2times
@@ -153,7 +192,8 @@ def move_piece(event, row=None, col=None):
         for mov in moves:
             update_board(mov[0], mov[1])
 
-
+def close():
+    log.close()
 
 def update_board(row, col):
     data = board.data
@@ -272,6 +312,9 @@ for f in os.listdir('icons'):
     icons[f] = icon
 
 # create buttons
+do_button = tk.Button(ui, text = "TEST", width = 10, command = dolog)
+close_button = tk.Button(ui, text = "TEST", width = 10, command = close)
+app_button= tk.Button(ui, text = "APPEND", width = 10, command = append)
 auto_button = tk.Button(ui, text = "AUTOMATE", width = 10, command = automate)
 restart_button = tk.Button(ui, text='RESET', width=10, command=reset)
 undo_button = tk.Button(ui, text='UNDO', width=10, command=undo)
@@ -280,6 +323,9 @@ undo_button = tk.Button(ui, text='UNDO', width=10, command=undo)
 restart_button.grid(row=4, column=0, padx=10, pady=10)
 undo_button.grid(row=5, column=0, padx=10, pady=10)
 auto_button.grid(row = 6, column = 0, padx = 10, pady = 10)
+do_button.grid(row = 7, column = 0, padx = 10, pady = 10)
+app_button.grid(row = 8, column = 0, padx = 10, pady = 10)
+close_button.grid(row = 9, column = 0, padx = 10, pady = 10)
 
 # put everything on the screen
 display_board()

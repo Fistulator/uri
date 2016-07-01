@@ -1,0 +1,30 @@
+Classic,5,0.831645158,Fancy,4,0.479161301,24,30,b,14:44,
+Zones,5,0.527781248,Fancy,4,0.302125022,25,31,b,05:55,
+weval,wdepth,wavgt,beval,bdepth,bavgt,wturns,bturns,winner,w:b,
+Classic,5,0.831387066,Fancy test sa l,4,0.483193597,24,30,b,14:44,14:44
+Zones,5,0.526093751,Fancy test sa l,4,0.301343754,25,31,b,05:55,05:55
+weval,wdepth,wavgt,beval,bdepth,bavgt,wturns,bturns,winner,w:b,
+Classic,5,1.207516124,Fancy test sa f,4,0.650967752,28,30,b,26:36:00,
+Zones,5,0.846903209,Fancy test sa f,4,0.376999993,28,30,b,11:51,
+weval,wdepth,wavgt,beval,bdepth,bavgt,wturns,bturns,winner,w:b,
+Classic,5,1.422450006,Fancy test sa f| m| ,4,0.495899975,20,19,b,21:22,
+Zones,5,1.120193558,Fancy test sa f| m| ,4,0.572129073,28,30,b,23:39,
+Classic,5,1.428413802,Fancy test sa f| m| c| ,4,0.73189654,28,28,w,37:23:00,
+Zones,5,1.190966678,Fancy test sa f| m| c| ,4,0.648966654,29,29,w,36:26:00,
+Fancy,3,0.184931032,Fancy test sa f| ,3,0.158448302,29,28,b,21:40,
+Fancy,3,0.256533305,Fancy test sa c| ,3,0.193033338,29,29,w,40:22:00,
+Fancy,3,0.221799994,Fancy test sa m| ,3,0.188233336,28,29,b,26:35:00,
+Fancy,3,0.231299996,Fancy test sa l| ,3,0.171833348,29,29,w,44:18:00,
+Fancy,3,0.265000025,Fancy test sa d| ,3,0.199966645,29,29,b,22:40,
+Fancy,3,0.286000013,Fancy test sa p| ,3,0.19435714,28,27,w,40:19:00,
+Fancy,3,0.228833349546,Fancy,3,0.169766664505,29,29,w,44 : 18
+Fancy test sa f| ,3,0.0836249887943,Fancy,3,0.147250011563,27,31,b,13 : 49
+Fancy test sa c| ,3,0.258333338632,Fancy,3,0.217666661298,27,26,w,32 : 25
+Fancy test sa m| ,3,0.0846333265305,Fancy,3,0.227099951108,29,29,w,36 : 26
+Fancy test sa l| ,3,0.226599979401,Fancy,3,0.168300008774,29,29,w,44 : 18
+Fancy test sa d| ,3,0.227633301417,Fancy,3,0.168933351835,29,29,w,44 : 18
+Fancy test sa p| ,3,0.290133333206,Fancy,3,0.241799998283,29,29,w,32 : 30
+Fancy test sa l| ,4,0.407285681793,Zones,5,0.50389288153,28,27,w,30 : 29
+Fancy test sa l| ,4,0.460785704,Classic,5,0.715785716261,28,27,b,16 : 43
+Zones,5,0.562000006437,Fancy test sa d| ,4,0.316500030458,25,31,b,5 : 55
+Classic,5,0.671161274756,Fancy test sa d| ,4,0.406612911532,28,30,b,25 : 37
